@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Break It </title>
+</head>
+<body>
+<center>
+<canvas id="canvas" width="450" height="350" style="background:#eee" > </canvas>
+</center>
+</body>
+<script>
+var canvas=document.getElementById("canvas");
+var ctx=canvas.getContext('2d');
+var x=canvas.width/2;
+var y=canvas.height-30;
+var paddlewidth=85;
+var paddleheight=10;
+var paddlex=(canvas.width-paddlewidth)/2;
+var paddley=canvas.height-paddleheight;
+var dx=2;
+var dy=-2;
+var row=3;
+var col=5;
+var brickwidth=70;
+var brickheight=20;
+var padding=15;
+var offsetleft=20;
+var offsettop=30;
+var brick=[];
+var score=0;
+var lives=3;
+for(var r=0;r<row;r++)
+{
+	brick[r]=[];
+	for(var c=0;c<col;c++)
+	{
+		brick[r][c]={x:0,y:0,status:1}
+		
+	}
+	
+}
+function drawbrick()
+{
+	for(var r=0;r<row;r++)
+{
+	
+	
+	for(var c=0;c<col;c++)
+	{
+		if(brick[r][c].status==1)
+		{
+		var xcood=(c*(brickwidth+padding))+offsetleft;
+		var ycood=(r*(brickheight+padding))+offsettop;
+		
+		brick[r][c].x=xcood;
+		brick[r][c].y=ycood;
+		
+		ctx.beginPath();
+		ctx.rect(xcood,ycood,brickwidth,brickheight);
+		ctx.fillStyle="orange";
+		ctx.fill();
+		ctx.closePath();
+		
+		}
+	}
+	
+}
+	
+	
+}
+function drawScore()
+{
+	ctx.font="16px Times New Roman";
+	ctx.fillStyle="blue";
+	ctx.fillText("Score:"+score,8,20);
+	
+	
+}
+function drawlives()
+{
+	ctx.font="16px Times New Roman";
+	ctx.fillStyle="blue";
+	ctx.fillText("Lives:"+lives,390,20);
+	
+	
+}
+function drawBall()
+{
+	ctx.beginPath();
+ctx.arc(x,y,10,0,Math.PI*2);
+ctx.fillStyle="skyblue";
+ctx.fill();
+ctx.closePath();
+	
+}
+function drawpaddle()
+{
+	ctx.beginPath();
+ctx.rect(paddlex,paddley,paddlewidth,paddleheight);
+ctx.fillStyle="red";
+ctx.fill();
+ctx.closePath();
+	
+}
+document.addEventListener('keydown',function(event)
+{
+	if(event.keyCode=='37')
+	{
+		if(paddlex>0)
+			paddlex-=7;
+		
+		
+	}
+	if(event.keyCode=='39')
+	{
+		if(paddlex<=canvas.width-paddlewidth)
+			paddlex+=7;
+		
+		
+	}
+	
+	
+	
+});
+function collision()
+{
+	for(var i=0;i<row;i++)
+	{
+		for(var j=0;j<col;j++)
+		{
+		var b=brick[i][j];
+			if(b.status==1)
+			{
+				if(x-10 >= b.x && x-10 <= b.x+brickwidth && y-10 >= b.y && y-10 <= b.y+brickheight)
+				{
+					b.status=0;
+					dy=-dy;
+					score++;
+					if(score==15)
+					{
+						alert("CONGO YOU WON");
+						document.location,reload();
+					}
+				}
+				
+			}
+			
+		}
+	}
+	
+}
+function draw()
+{
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	drawBall();
+	drawpaddle();
+	drawbrick();
+	drawScore();
+	drawlives();
+	collision();
+if(y+dy>canvas.height-15)
+{
+if(x+dx>paddlex&&x+dx<(paddlex+paddlewidth))
+	dy=-dy;
+else{
+	lives--;
+	if(lives==0){
+	alert("GAME OVER");
+	document.location.reload();
+	}
+	else{
+	 x=((canvas.width-paddlewidth)/2)-10;
+ y=canvas.height-paddleheight-10;
+dx=2;
+dy=-2;
+	}
+}
+}
+if(y+dy<10||y+dy>canvas.height-10)
+	dy=-dy;
+if(x+dx>canvas.width-10||x+dx<10)
+	dx=-dx;
+
+x+=dx;
+y+=dy;
+}
+
+
+setInterval(draw,20);
+
+</script>
+</html>
